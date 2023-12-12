@@ -232,8 +232,8 @@ function App() {
 											<th scope="col">Value</th>
 										</tr>
 									</thead>
-									<tbody>
-										{tenTransactions.map((v, i) => {
+									<tbody> 
+										{tenTransactions.map((v, i) => { 
 											if (i < 10)
 												return <tr key={i} className="">
 													<td>
@@ -252,6 +252,9 @@ function App() {
 														{(Number(v.value) / (10 ** 18)).toFixed(7) || 0} eth
 													</td>
 												</tr>
+											else
+												return null
+
 										})
 										}
 									</tbody>

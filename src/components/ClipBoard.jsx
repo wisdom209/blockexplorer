@@ -13,7 +13,7 @@ const ClipBoard = ({ textToCopy }) => {
 	return (
 		<div
 			style={{ display: 'inline-block' }}
-		><img src='/clipboard_icon.png' onClick={async () => {
+		><img src='/clipboard_icon.png' alt="clipboard" onClick={async () => {
 			await navigator.clipboard.writeText(textToCopy)
 			setCopySuccess(true)
 		}}
