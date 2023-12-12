@@ -1,13 +1,15 @@
 import React from 'react'
 import Modal from "react-modal"
 
-const BlockModal = ({ modalOpen, setModalOpen, details }) => {
-	
+const BlockModal = ({ modalOpen, setModalOpen, details, setBlockNumber }) => {
+
 	return (
 		<Modal
 			className="card"
 			isOpen={modalOpen}
-			onRequestClose={() => setModalOpen(false)}
+			onRequestClose={() => {
+				setModalOpen(false)
+			}}
 			ariaHideApp={false}
 			style={{
 				content: {
@@ -24,7 +26,9 @@ const BlockModal = ({ modalOpen, setModalOpen, details }) => {
 
 			<div className="card-header d-flex justify-content-between align-items-center g-2">
 				<div>Block Details</div>
-				<button className="text-danger" onClick={() => setModalOpen(false)}>x</button>
+				<button className="text-danger" onClick={() => {
+					setModalOpen(false)
+				}}>x</button>
 			</div>
 			{details && details.type === "Block" ?
 				<div className="card-body">
@@ -36,7 +40,7 @@ const BlockModal = ({ modalOpen, setModalOpen, details }) => {
 					<p className="card-text">Gas used: {Number(details.result.gasUsed)}</p>
 					<p className="card-text">Gas Limit: {Number(details.result.gasLimit)}</p>
 					<p className="card-text">Number of Transactions: {details.result.transactions.length}</p>
-					<p className="card-text">Transactions: <em>{details.result.transactions.map(v => v?.hash)}</em></p>
+					{/* <p className="card-text">Transactions: <em>{details.result.transactions.map(v => v)}</em></p> */}
 				</div> :
 				<div
 					className="spinner-border  "
