@@ -1,12 +1,16 @@
 import React from 'react'
 import Modal from "react-modal"
+import { Utils } from 'alchemy-sdk'
 
-const TransactionModal = ({ modalOpen, setModalOpen, details }) => {
+const TransactionModal = ({ modalOpen, setModalOpen, details, name }) => {
+	const txHash = details && details?.type === "Transaction" && details.hash
+
 	return (
 		<Modal
 			className="card"
 			isOpen={modalOpen}
 			onRequestClose={() => setModalOpen(false)}
+			ariaHideApp={false}
 			style={{
 				content: {
 					top: "20%",
@@ -20,21 +24,28 @@ const TransactionModal = ({ modalOpen, setModalOpen, details }) => {
 			}}
 		>
 
-			<div class="card-header d-flex justify-content-between align-items-center g-2">
+			<div className="card-header d-flex justify-content-between align-items-center g-2">
 				<div>Transaction Receipt</div>
-				<button class="text-danger" onClick={() => setModalOpen(false)}>x</button>
+				<button className="text-danger" onClick={() => setModalOpen(false)}>x</button>
 			</div>
-			<div class="card-body">
-				<h4 class="card-title">Transaction: {Math.round(Math.random() * 1000)}</h4>
-				<p class="card-text">From: {Math.round(Math.random() * 1000)}</p>
-				<p class="card-text">To: {Math.round(Math.random() * 1000)}</p>
-				<p class="card-text">Value: {Math.round(Math.random() * 1000)}</p>
-				<p class="card-text">BlockNumber: {Math.round(Math.random() * 1000)}</p>
-				<p class="card-text">Gas Limit: {Math.round(Math.random() * 1000)}</p>
-				<p class="card-text">Gas Price: {Math.round(Math.random() * 1000)}</p>
-			</div>
+			{details && details?.Type == "Transaction" && details?.result ?
+				<div className="card-body">
+					<h6 className="card-title">Transaction: {txHash}</h6>
+					<p className="card-text">From: {details.result.from}</p>
+					<p className="card-text">To: {details.result.to}</p>
+					<p className="card-text">Value: {Utils.formatEther(details.result.value)} eth</p>
+					<p className="card-text">BlockNumber: {Number(details.result.blockNumber)}</p>
+					<p className="card-text">Gas: {Number(details.result.gas)}</p>
+					<p className="card-text">Gas Price: {Number(Utils.formatUnits(details.result.gasPrice))}</p>
+				</div> :
 
-
+				<div
+					className="spinner-border"
+					role="status"
+				>
+					<span className="visually-hidden">Loading...</span>
+				</div>
+			}
 		</Modal>
 	)
 }
