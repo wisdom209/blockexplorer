@@ -3,7 +3,7 @@ import Modal from "react-modal"
 import { Utils } from 'alchemy-sdk'
 
 const BalanceModal = ({ modalOpen, setModalOpen, details }) => {
-	const balance = details?.type === "Balance" && details.result && Utils.formatEther(details.result).substring(0, 7)
+	const balance = details?.type === "Balance" && details.result && Utils.formatEther(details.result).substring(0, 10)
 	const address = details?.walletAddress
 
 	return (

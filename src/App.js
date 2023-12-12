@@ -1,5 +1,5 @@
 import { Alchemy, Network } from 'alchemy-sdk';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import BalanceModal from "./components/BalanceModal";
 import BlockModal from './components/BlockModal';
 import TransactionModal from './components/TransactionModal';
@@ -31,6 +31,30 @@ function App() {
 	const [balanceModalOpen, setBalanceModalOpen] = useState(false)
 	const [transactionModal, setTransactionModal] = useState(false)
 	const [blockModal, setBlockModal] = useState(false)
+	const [latestBlockNumber, setLatestBlockNumber] = useState(null)
+	const [lastTenBlockNum, setLastTenBlockNums] = useState([])
+
+	useEffect(() => {
+		const getBlockNumber = async () => {
+			//setLatestBlockNumber(await alchemy.core.getBlockNumber())
+			setTimeout(() => {
+				let lastNum = 18769760
+				setLatestBlockNumber(lastNum)
+
+				let lasttenNums = Array(10).fill("_").map((v, i, a) => {
+					if ((i === 0)) return latestBlockNumber
+					else {
+						return a[i - 1] - 1
+					}
+				})
+				
+				setLastTenBlockNums(lasttenNums)
+
+			}, 2000)
+		}
+		getBlockNumber()
+	}, [latestBlockNumber])
+
 
 	const validEthAddress = (address) => {
 		let addressRegex = /^(0x)?[0-9a-fA-F]{40}$/
@@ -47,19 +71,17 @@ function App() {
 		return addressRegex.test(hash)
 	}
 
-	const openBalanceModal = () => {
+	const openBalanceModal = async () => {
 		if (validEthAddress(address)) {
 			setDisplayDetails(null)
 			setBalanceModalOpen(true)
-			setTimeout(() => {	//ajax request will take place here
-				setDisplayDetails({
-					type: "Balance",
-					walletAddress: address,
-					"jsonrpc": "2.0",
-					"id": 1,
-					"result": "0x7f49b9052e509c"
-				})
-			}, 2000);
+			const balance = await alchemy.core.getBalance(address)
+			setDisplayDetails({
+				type: "Balance",
+				walletAddress: address,
+				"result": balance
+			})
+
 		} else {
 			alert("Invalid Wallet Address")
 		}
@@ -105,37 +127,18 @@ function App() {
 		}
 	}
 
-	const openTransactionModal = () => {
+	const openTransactionModal = async () => {
 		setDisplayDetails(null)
 		if (validTxHash(txHash)) {
+			const result = await alchemy.core.getTransaction(txHash)
 			setTransactionModal(true)
-			setTimeout(() => {
-				setDisplayDetails({
-					type: "Transaction",
-					hash: txHash,
-					"jsonrpc": "2.0",
-					"id": 1,
-					"result": {
-						"blockHash": "0x1d59ff54b1eb26b013ce3cb5fc9dab3705b415a67127a003c3e61eb445bb8df2",
-						"blockNumber": "0x5daf3b",
-						"hash": "0x88df016429689c079f3b2f6ad39fa052532c56795b733da78a91ebe6a713944b",
-						"from": "0xa7d9ddbe1f17865597fbd27ec712455208b6b76d",
-						"gas": "0xc350",
-						"gasPrice": "0x4a817c800",
-						"input": "0x68656c6c6f21",
-						"nonce": "0x15",
-						"r": "0x1b5e176d927f8e9ab405058b2d2457392da3e20f328b16ddabcebc33eaac5fea",
-						"s": "0x4ba69724e8f69de52f0125ad8b3c5c2cef33019bac3249e2c0a2192766d1721c",
-						"to": "0xf02c1c8e6114b1dbe8937a39260b5b0a374432bb",
-						"transactionIndex": "0x41",
-						"type": "0x0",
-						"v": "0x25",
-						"value": "0xf3dbb76162000"
-					}
-				})
-			}, 2000)
+			setDisplayDetails({
+				type: "Transaction",
+				hash: txHash,
+				result
+			})
 		} else {
-			alert("Invalid Transaction Hash")
+			alert(`Invalid transaction hash: ${txHash}`)
 		}
 	}
 
@@ -160,7 +163,7 @@ function App() {
 		<header>
 			<nav className="navbar navbar-expand navbar-light bg-light p-3">
 				<div className="nav navbar-nav ">
-					<h1>The Ethereum Blockchain Explorer</h1>
+					<h1>The Ethereum Blockchain Explorer {latestBlockNumber}</h1>
 				</div>
 			</nav>
 		</header>
@@ -225,7 +228,10 @@ function App() {
 							</thead>
 							<tbody>
 								{Array(10).fill("_").map((v, i) => <tr key={i} className="">
-									<td>R1C1</td>
+									<td><button onClick={() => {
+										setBlockNumber(10)
+										openBlockModal()
+									}}>{blockNumber}</button></td>
 									<td>{Math.random() * 100}</td>
 									<td>{Math.random() * 100}</td>
 								</tr>)
@@ -250,7 +256,10 @@ function App() {
 							</thead>
 							<tbody>
 								{Array(10).fill("_").map((v, i) => <tr key={i} className="">
-									<td>R1C1</td>
+									<td><button onClick={() => {
+										setTxHash("0x5b73e239c55d790e3c9c3bbb84092652db01bb8dbf49ccc9e4a318470419d9a0")
+										openTransactionModal()
+									}}>{`${txHash.substring(0, 5)}...${txHash.substring(59)}`}</button></td>
 									<td>{Math.random() * 100}</td>
 									<td>{Math.random() * 100}</td>
 									<td>{Math.round(Math.random() * 100)}</td>

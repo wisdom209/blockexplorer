@@ -28,15 +28,15 @@ const TransactionModal = ({ modalOpen, setModalOpen, details, name }) => {
 				<div>Transaction Receipt</div>
 				<button className="text-danger" onClick={() => setModalOpen(false)}>x</button>
 			</div>
-			{details && details?.Type == "Transaction" && details?.result ?
+			{details && details?.type === "Transaction" && details?.result ?
 				<div className="card-body">
 					<h6 className="card-title">Transaction: {txHash}</h6>
 					<p className="card-text">From: {details.result.from}</p>
 					<p className="card-text">To: {details.result.to}</p>
 					<p className="card-text">Value: {Utils.formatEther(details.result.value)} eth</p>
 					<p className="card-text">BlockNumber: {Number(details.result.blockNumber)}</p>
-					<p className="card-text">Gas: {Number(details.result.gas)}</p>
-					<p className="card-text">Gas Price: {Number(Utils.formatUnits(details.result.gasPrice))}</p>
+					<p className="card-text">Gas Limit {Number(details.result.gasLimit)}</p>
+					<p className="card-text">Gas Price: {Number(Utils.formatEther(details.result.gasPrice))}</p>
 				</div> :
 
 				<div

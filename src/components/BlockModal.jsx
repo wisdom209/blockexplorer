@@ -32,7 +32,7 @@ const BlockModal = ({ modalOpen, setModalOpen, details }) => {
 					<p className="card-text">Nonce: {Number(details.result.nonce)}</p>
 					<p className="card-text">Block Number: {details.blockNumber}</p>
 					<p className="card-text">Timestamp: {details.result.timestamp}</p>
-					<p className="card-text">Miner: {Math.round(Math.random() * 1000)}</p>
+					<p className="card-text">Miner: {details.result.miner}</p>
 					<p className="card-text">Gas used: {Number(details.result.gasUsed)}</p>
 					<p className="card-text">Gas Limit: {Number(details.result.gasLimit)}</p>
 					<p className="card-text">Number of Transactions: {details.result.transactions.length}</p>
