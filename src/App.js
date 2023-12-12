@@ -48,9 +48,10 @@ function App() {
 				const blockDetails = await Promise.all(blockDetailsPromises)
 
 				setTenBlocks(blockDetails)
-				const transactionDetailsPromises = blockDetails[0].transactions.map((v, i) => {
-					return i < 10 && alchemy.core.getTransaction(v)
+				const transactionDetailsPromises = blockDetails[0].transactions.slice(0, 10).map((v, i) => {
+					return alchemy.core.getTransaction(v)
 				})
+				
 				const transactionDetails = await Promise.all(transactionDetailsPromises)
 
 				setTenTransactions(transactionDetails)
@@ -232,8 +233,8 @@ function App() {
 											<th scope="col">Value</th>
 										</tr>
 									</thead>
-									<tbody> 
-										{tenTransactions.map((v, i) => { 
+									<tbody>
+										{tenTransactions.map((v, i) => {
 											if (i < 10)
 												return <tr key={i} className="">
 													<td>
@@ -262,13 +263,13 @@ function App() {
 							</div>
 						</div> :
 						<div style={{ marginTop: "100px" }}
-							class="d-flex justify-content-center align-items-center"
+							className="d-flex justify-content-center align-items-center"
 						>
 							<div
-								class="spinner-border"
+								className="spinner-border"
 								role="status"
 							>
-								<span class="visually-hidden">Loading...</span>
+								<span className="visually-hidden">Loading...</span>
 							</div>
 						</div>
 
