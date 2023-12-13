@@ -39,18 +39,26 @@ function App() {
 	useEffect(() => {
 		const getBlockNumber = async () => {
 			let lastNum = await axios.get(`${baseServerAddress}/getBlockNumber`)
+			lastNum = lastNum.data
 
 			let lasttenNums = Array(10).fill("_").map((v, i, a) => {
-				if ((i === 0)) return lastNum.data
+				if ((i === 0)) return lastNum
 				else {
-					return --lastNum.data
+					return --lastNum
 				}
 			})
-			try {
-				const blockDetailsPromises = lasttenNums.map(v => axios.get(`${baseServerAddress}/getBlock/${v}`))
-				let blockDetails = await Promise.all(blockDetailsPromises)
-				blockDetails = blockDetails.map(v => v?.data)
 
+			try {
+				let blockDetailsPromises = lasttenNums.map(v => {
+					console.log(v)
+					return axios.get(`${baseServerAddress}/getBlock/${v}`)
+				}
+				)
+				
+				let blockDetails = await Promise.all(blockDetailsPromises)
+				console.log("prev", blockDetails)
+				blockDetails = blockDetails.map(v => v?.data)
+				console.log(blockDetails)
 				setTenBlocks(blockDetails)
 
 				const transactionDetailsPromises = blockDetails[0].transactions.slice(0, 10).map((v, i) => {
