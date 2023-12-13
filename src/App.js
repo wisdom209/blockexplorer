@@ -34,8 +34,9 @@ function App() {
 	const [blockModal, setBlockModal] = useState(false)
 	const [tenBlocks, setTenBlocks] = useState(Array(10).fill("..."))
 	const [tenTransactions, setTenTransactions] = useState(null)
-	//const baseServerAddress = "https://blockexplorer-backend-wisdom209.vercel.app" //change to https://localhost:4000 if you want to use localhost and start the local server
-	const baseServerAddress = "http://localhost:4000"
+	const baseServerAddress = "https://blockexplorer-backend-wisdom209.vercel.app" 
+	//change to https://localhost:4000 if you want to use localhost and start the local server
+	//const baseServerAddress = "http://localhost:4000"
 
 	useEffect(() => {
 		const getBlockNumber = async () => {
