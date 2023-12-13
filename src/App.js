@@ -164,7 +164,7 @@ function App() {
 				<div
 					className="row justify-content-center align-items-center g-2"
 				>
-					{operations.map(({ name, label, placeholder }, i) => <div key={i} className='col'>
+					{operations.map(({ name, label, placeholder }, i) => <div key={i} className='col-sm-12 col-md-4 g-2'>
 						<div
 							className="card text-white bg-primary"
 						>
