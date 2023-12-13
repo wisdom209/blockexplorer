@@ -1,5 +1,6 @@
 import React from 'react'
 import Modal from "react-modal"
+import { Utils } from 'alchemy-sdk'
 
 const BlockModal = ({ modalOpen, setModalOpen, details, setBlockNumber }) => {
 
@@ -37,8 +38,8 @@ const BlockModal = ({ modalOpen, setModalOpen, details, setBlockNumber }) => {
 					<p className="card-text">Block Number: {details.blockNumber}</p>
 					<p className="card-text">Timestamp: {details.result.timestamp}</p>
 					<p className="card-text">Miner: {details.result.miner}</p>
-					<p className="card-text">Gas used: {Number(details.result.gasUsed)}</p>
-					<p className="card-text">Gas Limit: {Number(details.result.gasLimit)}</p>
+					<p className="card-text">Gas used: {Utils.formatUnits(details.result.gasUsed)}</p>
+					<p className="card-text">Gas Limit: {Utils.formatUnits(details.result.gasLimit)}</p>
 					<p className="card-text">Number of Transactions: {details.result.transactions.length}</p>
 					{/* <p className="card-text">Transactions: <em>{details.result.transactions.map(v => v)}</em></p> */}
 				</div> :

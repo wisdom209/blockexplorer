@@ -1,4 +1,5 @@
-import { Alchemy, Network } from 'alchemy-sdk';
+import { Utils } from 'alchemy-sdk';
+import axios from 'axios';
 import { useEffect, useState } from 'react';
 import BalanceModal from "./components/BalanceModal";
 import BlockModal from './components/BlockModal';
@@ -9,18 +10,18 @@ import TransactionModal from './components/TransactionModal';
 // Refer to the README doc for more information about using API
 // keys in client-side code. You should never do this in production
 // level code.
-const settings = {
+/* const settings = {
 	apiKey: process.env.REACT_APP_ALCHEMY_API_KEY,
 	network: Network.ETH_MAINNET,
 };
-
+ */
 
 // In this week's lessons we used ethers.js. Here we are using the
 // Alchemy SDK is an umbrella library with several different packages.
 //
 // You can read more about the packages here:
 //   https://docs.alchemy.com/reference/alchemy-sdk-api-surface-overview#api-surface
-const alchemy = new Alchemy(settings);
+//const alchemy = new Alchemy(settings);
 
 
 function App() {
@@ -33,26 +34,31 @@ function App() {
 	const [blockModal, setBlockModal] = useState(false)
 	const [tenBlocks, setTenBlocks] = useState(Array(10).fill("..."))
 	const [tenTransactions, setTenTransactions] = useState(null)
+	const baseServerAddress = "http://localhost:4000"
 
 	useEffect(() => {
 		const getBlockNumber = async () => {
-			let lastNum = await alchemy.core.getBlockNumber()
+			let lastNum = await axios.get(`${baseServerAddress}/getBlockNumber`)
+
 			let lasttenNums = Array(10).fill("_").map((v, i, a) => {
-				if ((i === 0)) return lastNum
+				if ((i === 0)) return lastNum.data
 				else {
-					return --lastNum
+					return --lastNum.data
 				}
 			})
 			try {
-				const blockDetailsPromises = lasttenNums.map(v => alchemy.core.getBlock(Number(v)))
-				const blockDetails = await Promise.all(blockDetailsPromises)
+				const blockDetailsPromises = lasttenNums.map(v => axios.get(`${baseServerAddress}/getBlock/${v}`))
+				let blockDetails = await Promise.all(blockDetailsPromises)
+				blockDetails = blockDetails.map(v => v?.data)
 
 				setTenBlocks(blockDetails)
+
 				const transactionDetailsPromises = blockDetails[0].transactions.slice(0, 10).map((v, i) => {
-					return alchemy.core.getTransaction(v)
+					return axios.get(`${baseServerAddress}/transaction/${v}`)
 				})
-				
-				const transactionDetails = await Promise.all(transactionDetailsPromises)
+
+				let transactionDetails = await Promise.all(transactionDetailsPromises)
+				transactionDetails = transactionDetails.map(v => v?.data)
 
 				setTenTransactions(transactionDetails)
 			} catch (e) {
@@ -80,11 +86,12 @@ function App() {
 		if (validEthAddress(address)) {
 			setDisplayDetails(null)
 			setBalanceModalOpen(true)
-			const balance = await alchemy.core.getBalance(address)
+			const balance = await axios.get(`${baseServerAddress}/balance/${address}`)
+
 			setDisplayDetails({
 				type: "Balance",
 				walletAddress: address,
-				"result": balance
+				"result": balance.data
 			})
 
 		} else {
@@ -95,7 +102,9 @@ function App() {
 
 	const openBlockModal = async () => {
 		if (Number(blockNumber) || Number(blockNumber) === 0) {
-			const result = await alchemy.core.getBlock(Number(blockNumber))
+			let result = await axios.get(`${baseServerAddress}/getBlock/${blockNumber}`)
+			result = result.data
+			console.log(result, "result block")
 			setDisplayDetails(null)
 			setBlockModal(true)
 			setDisplayDetails({
@@ -112,11 +121,13 @@ function App() {
 		setDisplayDetails(null)
 		if (validTxHash(txHash)) {
 			setTransactionModal(true)
-			const result = await alchemy.core.getTransaction(txHash)
+			let result = await axios.get(`${baseServerAddress}/transaction/${txHash}`)
+			result = result.data
+
 			setDisplayDetails({
 				type: "Transaction",
 				hash: txHash,
-				result
+				result: result
 			})
 		} else {
 			alert(`Invalid transaction hash: ${txHash}`)
@@ -250,7 +261,7 @@ function App() {
 														<ClipBoard textToCopy={v.to} />
 													</td>
 													<td>
-														{(Number(v.value) / (10 ** 18)).toFixed(7) || 0} eth
+														{Utils.formatEther(v.value)} eth
 													</td>
 												</tr>
 											else

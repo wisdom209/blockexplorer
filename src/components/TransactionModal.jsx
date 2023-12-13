@@ -35,7 +35,8 @@ const TransactionModal = ({ modalOpen, setModalOpen, details, name }) => {
 					<p className="card-text">To: {details.result.to}</p>
 					<p className="card-text">Value: {Utils.formatEther(details.result.value)} eth</p>
 					<p className="card-text">BlockNumber: {Number(details.result.blockNumber)}</p>
-					<p className="card-text">Gas Limit {Number(details.result.gasLimit)}</p>
+					<p className="card-text">
+						Gas Limit {Utils.formatUnits(details.result.gasLimit)}</p>
 					<p className="card-text">Gas Price: {Number(Utils.formatEther(details.result.gasPrice))}</p>
 				</div> :
 
