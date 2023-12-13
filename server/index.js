@@ -34,8 +34,8 @@ app.get("/getBlockNumber", async (req, res) => {
 app.get("/getBlock/:number", async (req, res) => {
 	/* Gets block details by number */
 	try {
-		const number = req.params.number
-
+		const number = Number(req.params.number)
+		
 		const block = await alchemy.core.getBlock(number)
 
 		return res.json(block)
