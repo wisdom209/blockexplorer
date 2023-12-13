@@ -34,7 +34,8 @@ function App() {
 	const [blockModal, setBlockModal] = useState(false)
 	const [tenBlocks, setTenBlocks] = useState(Array(10).fill("..."))
 	const [tenTransactions, setTenTransactions] = useState(null)
-	const baseServerAddress = "https://blockexplorer-backend-wisdom209.vercel.app" 
+	const [lastBlockNumber, setLastBlockNumber] = useState(0)
+	const baseServerAddress = "https://blockexplorer-backend-wisdom209.vercel.app"
 	//change to https://localhost:4000 if you want to use localhost and start the local server
 	//const baseServerAddress = "http://localhost:4000"
 
@@ -42,6 +43,7 @@ function App() {
 		const getBlockNumber = async () => {
 			let lastNum = await axios.get(`${baseServerAddress}/getBlockNumber`)
 			lastNum = lastNum.data
+			setLastBlockNumber(lastNum)
 
 			let lasttenNums = Array(10).fill("_").map((v, i, a) => {
 				if ((i === 0)) return lastNum
@@ -58,9 +60,9 @@ function App() {
 
 				let blockDetails = await Promise.all(blockDetailsPromises)
 				blockDetails = blockDetails.map(v => v?.data)
-	
+
 				setTenBlocks(blockDetails)
-				
+
 				const transactionDetailsPromises = blockDetails[0].transactions.slice(0, 10).map((v, i) => {
 					return axios.get(`${baseServerAddress}/transaction/${v}`)
 				})
@@ -109,7 +111,7 @@ function App() {
 	}
 
 	const openBlockModal = async () => {
-		if (Number(blockNumber) || Number(blockNumber) === 0) {
+		if (Number(blockNumber) && Number(blockNumber) >= 0 && Number(blockNumber) <= lastBlockNumber) {
 			let result = await axios.get(`${baseServerAddress}/getBlock/${blockNumber}`)
 			result = result.data
 			setDisplayDetails(null)
